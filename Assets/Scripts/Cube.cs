@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour, InteractiveObject
 {
+    public string Identifier { get
+        {
+            return this.tag;
+        }
+    }
     public List<Ability> WithinVicinityAbilities { get; private set; }
     public List<Ability> RightNextToAbilities { get; private set; }
     public List<Ability> EquippedAbilities { get; private set; }

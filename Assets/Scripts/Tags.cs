@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class Tags
 {
-    public static string PromptResponseUI = "PromptResponseUI";
+    public const string PromptResponseUI = "PromptResponseUI";
+    public const string YellowCube = "YellowCube";
 }

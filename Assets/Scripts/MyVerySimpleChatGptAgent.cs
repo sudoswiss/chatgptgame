@@ -9,6 +9,7 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     private List<InteractiveObject> withinVicinityGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> rightNextToGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> equippedGameObjects = new List<InteractiveObject>();
+    private List<Ability> inherentAbilities = new List<Ability>();
     private InteractiveObject targetInteractiveObject;
     private bool didDetectTarget = false;
     private NavMeshAgent navMeshAgent;
@@ -19,6 +20,7 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
         brainAdapter = GetComponent<BrainAdapter>();
         brainAdapter.Callback = this;
         navMeshAgent = GetComponent<NavMeshAgent>();
+        this.inherentAbilities.Add(new DoNothing());
     }
 
     // Start is called before the first frame update
@@ -36,9 +38,34 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        InteractiveObject interactiveObject = null;
+        switch(other.tag)
+        {
+            case Tags.YellowCube:
+                interactiveObject = other.gameObject.GetComponent<Cube>();
+                break;
+            default:
+                break;
+        }
+        if(interactiveObject != null)
+        {
+            rightNextToGameObjects.Add(interactiveObject);
+
+            // Remove object from other vicinities
+            this.withinVicinityGameObjects.Remove(interactiveObject);
+            this.equippedGameObjects.Remove(interactiveObject);
+
+            var context = "Object " + interactiveObject.Identifier + " is right next to you.";
+            brainAdapter.RequestInput(context, this.inherentAbilities, this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
+        }
+    }
+
     public void DidEnterVicinityOfAgent(InteractiveObject gameObject) {
+        var context = "Object " + gameObject.Identifier + " is within your vicinity.";
         withinVicinityGameObjects.Add(gameObject);
-        brainAdapter.RequestInput(this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
+        brainAdapter.RequestInput(context, this.inherentAbilities, this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
     }
 
     public void PerformAction(Ability ability) {

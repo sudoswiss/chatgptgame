@@ -15,6 +15,8 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
     }
 
     public void RequestInput(
+        string context,
+        List<Ability> inherentAbilities,
         List<InteractiveObject> withinVicinityGameObjects,
         List<InteractiveObject> rightNextToGameObjects,
         List<InteractiveObject> equippedGameObjects,
@@ -23,7 +25,14 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
         var index = 1;
         var options = new List<string>();
         var abilities = new List<Ability>();
-        foreach(InteractiveObject interactiveObject in withinVicinityGameObjects) {
+
+        foreach (Ability ability in inherentAbilities)
+        {
+            options.Add("[" + index + "]" + ability.ToString());
+            abilities.Add(ability);
+            index++;
+        }
+        foreach (InteractiveObject interactiveObject in withinVicinityGameObjects) {
             foreach(Ability ability in interactiveObject.WithinVicinityAbilities) {
                 options.Add("[" + index + "]" + ability.ToString());
                 abilities.Add(ability);
@@ -50,7 +59,7 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
         foreach(string option in options) {
             optionsString += option;
         }
-        var completePrompt = promptPreamble + "\n" + optionsString;
+        var completePrompt = context + " " + promptPreamble + "\n" + optionsString;
         brain.SendPrompt(new PromptData(completePrompt, abilities, options));
     }
 
