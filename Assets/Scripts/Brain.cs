@@ -34,9 +34,18 @@ public interface Brain
 {
     BrainCallback Callback { get; set; }
 
+    RawBrainCallback RawCallback { get; set; }
+
     void SendPrompt(PromptData promptData);
+
+    void SendRawPrompt(string prompt);
 }
 
 public interface BrainCallback {
     void DidReceiveResponse(ResponseData responseData);
+}
+
+public interface RawBrainCallback
+{
+    void DidReceiveResponse(string rawResponse);
 }

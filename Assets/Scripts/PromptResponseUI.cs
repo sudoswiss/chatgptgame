@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class PromptResponseUI : MonoBehaviour
 {
-    private TMP_Text promptText;
-    private TMP_InputField inputField;
     private PromptData promptData;
 
     public PromptResponseUIDelegate Delegate { get; set; }
@@ -14,8 +13,7 @@ public class PromptResponseUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        promptText = GetComponentInChildren<TMP_Text>();
-        inputField = GetComponentInChildren<TMP_InputField>();
+        
     }
 
     // Update is called once per frame
@@ -24,13 +22,20 @@ public class PromptResponseUI : MonoBehaviour
         
     }
 
+    public void Show()
+    {
+        this.gameObject.SetActive(true);
+    }
+
     public void OnSubmitButtonPressed() {
-        if(this.Delegate != null) {
+        var inputField = GetComponentInChildren<TMP_InputField>();
+        if (this.Delegate != null) {
             this.Delegate.SendResponse(new ResponseData(inputField.text, this.promptData.PossibleAbilities, this.promptData.PossibleOptions));
         }
     }
 
     public void ReceivePrompt(PromptData promptData) {
+        var promptText = GetComponentInChildren<TMP_Text>();
         this.promptData = promptData;
         promptText.text = promptData.Prompt;
     }

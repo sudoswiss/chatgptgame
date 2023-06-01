@@ -3,24 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHandler, BrainAdapterCallback
+public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHandler, BrainAdapterCallback, AgentPromptUIDelegate, RawBrainCallback
 {
     private BrainAdapter brainAdapter;
+    private Brain brain;
     private List<InteractiveObject> withinVicinityGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> rightNextToGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> equippedGameObjects = new List<InteractiveObject>();
     private List<Ability> inherentAbilities = new List<Ability>();
     private InteractiveObject targetInteractiveObject;
-    private bool didDetectTarget = false;
     private NavMeshAgent navMeshAgent;
+    private AgentPromptUI agentPromptUI;
 
     public GameObject target; 
 
     void Awake() {
         brainAdapter = GetComponent<BrainAdapter>();
         brainAdapter.Callback = this;
+        brain = GetComponent<Brain>();
+        brain.RawCallback = this;
         navMeshAgent = GetComponent<NavMeshAgent>();
         this.inherentAbilities.Add(new DoNothing());
+        this.agentPromptUI = GameObject.FindGameObjectsWithTag(Tags.AgentPromptUI)[0].GetComponent<AgentPromptUI>();
+        this.agentPromptUI.Delegate = this;
     }
 
     // Start is called before the first frame update
@@ -32,10 +37,6 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     // Update is called once per frame
     void Update()
     {
-        if(!didDetectTarget) {
-            didDetectTarget = true;
-            DidEnterVicinityOfAgent(targetInteractiveObject);
-        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -79,6 +80,18 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
                 this.navMeshAgent.destination = target.transform.position;
             }
         }
+    }
+
+    public void SendPrompt(string prompt)
+    {
+        this.brain.SendRawPrompt(prompt);
+    }
+
+    public void DidReceiveResponse(string rawResponse)
+    {
+        Debug.Log("Raw response from Brain: " + rawResponse);
+        this.agentPromptUI.Hide();
+        DidEnterVicinityOfAgent(targetInteractiveObject);
     }
 }
 

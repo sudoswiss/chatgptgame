@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PromptResponseUI
   - YellowCube
+  - AgentPromptUI
   layers:
   - Default
   - TransparentFX

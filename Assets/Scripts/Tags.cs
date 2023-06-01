@@ -6,4 +6,5 @@ public class Tags
 {
     public const string PromptResponseUI = "PromptResponseUI";
     public const string YellowCube = "YellowCube";
+    public const string AgentPromptUI = "AgentPromptUI";
 }
