@@ -48,4 +48,6 @@ public interface BrainCallback {
 public interface RawBrainCallback
 {
     void DidReceiveResponse(string rawResponse);
+
+    void DidReceiveError(string message);
 }

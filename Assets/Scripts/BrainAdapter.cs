@@ -10,7 +10,7 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
     public BrainAdapterCallback Callback { get; set; }
 
     void Awake() {
-        brain = GetComponent<HumanBrain>();
+        brain = GetComponent<GptBrain>();
         this.brain.Callback = this;
     }
 
@@ -60,10 +60,12 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
             optionsString += option;
         }
         var completePrompt = context + " " + promptPreamble + "\n" + optionsString;
+        Debug.Log("Adapter> Send prompt: " + completePrompt);
         brain.SendPrompt(new PromptData(completePrompt, abilities, options));
     }
 
     public void DidReceiveResponse(ResponseData responseData) {
+        Debug.Log("Adapter> Did receive response: " + responseData.Response);
         // e.g. selectedOption = [1] Turn left
         var selectedOption = responseData.PossibleOptions.First(option => option.Contains(responseData.Response));
         // e.g. optionWithoutIndex = Turn left

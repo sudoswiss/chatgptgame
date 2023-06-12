@@ -20,7 +20,7 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     void Awake() {
         brainAdapter = GetComponent<BrainAdapter>();
         brainAdapter.Callback = this;
-        brain = GetComponent<Brain>();
+        brain = GetComponent<GptBrain>();
         brain.RawCallback = this;
         navMeshAgent = GetComponent<NavMeshAgent>();
         this.inherentAbilities.Add(new DoNothing());
@@ -92,6 +92,11 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
         Debug.Log("Raw response from Brain: " + rawResponse);
         this.agentPromptUI.Hide();
         DidEnterVicinityOfAgent(targetInteractiveObject);
+    }
+
+    public void DidReceiveError(string message)
+    {
+        // TODO error handling
     }
 }
 
