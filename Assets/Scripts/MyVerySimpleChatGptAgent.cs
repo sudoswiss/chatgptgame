@@ -10,11 +10,10 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     private List<InteractiveObject> rightNextToGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> equippedGameObjects = new List<InteractiveObject>();
     private List<Ability> inherentAbilities = new List<Ability>();
-    private InteractiveObject targetInteractiveObject;
     private NavMeshAgent navMeshAgent;
     private AgentPromptUI agentPromptUI;
 
-    public GameObject target; 
+    public List<GameObject> targets = new List<GameObject>();
 
     void Awake() {
         brainAdapter = GetComponent<BrainAdapter>();
@@ -28,7 +27,6 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     // Start is called before the first frame update
     void Start()
     {
-        targetInteractiveObject = target.GetComponent<Cube>();
     }
 
     // Update is called once per frame
@@ -42,6 +40,15 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
         switch(other.tag)
         {
             case Tags.YellowCube:
+                interactiveObject = other.gameObject.GetComponent<Cube>();
+                break;
+            case Tags.RedCube:
+                interactiveObject = other.gameObject.GetComponent<Cube>();
+                break;
+            case Tags.BlueCube:
+                interactiveObject = other.gameObject.GetComponent<Cube>();
+                break;
+            case Tags.GreenCube:
                 interactiveObject = other.gameObject.GetComponent<Cube>();
                 break;
             default:
@@ -88,7 +95,14 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     public void DidAcknowledgeTask()
     {
         this.agentPromptUI.Hide();
-        DidEnterVicinityOfAgent(targetInteractiveObject);
+        foreach(GameObject target in targets)
+        {
+            var interactiveObject = target.GetComponent<Cube>();
+            withinVicinityGameObjects.Add(interactiveObject);
+        }
+
+        var context = "Some objects are within your vicinity.";
+        brainAdapter.RequestInput(context, this.inherentAbilities, this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
     }
 }
 

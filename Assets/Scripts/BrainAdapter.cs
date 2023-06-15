@@ -18,6 +18,7 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
     public void DefineTask(string task)
     {
         var taskWithContext = "Hello there. I want to play a game with you. Imagine that you are in a virtual, hypothetical world. In this world, " + task + ". Can you play along?";
+        Debug.Log(">Adapter: Define task: " + taskWithContext);
         this.brain.SendRawPrompt(taskWithContext);
     }
 
