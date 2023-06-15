@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class BrainAdapter : MonoBehaviour, BrainCallback
+public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
 {
     private Brain brain;
 
@@ -12,6 +12,13 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
     void Awake() {
         brain = GetComponent<GptBrain>();
         this.brain.Callback = this;
+        this.brain.RawCallback = this;
+    }
+
+    public void DefineTask(string task)
+    {
+        var taskWithContext = "Hello there. I want to play a game with you. Imagine that you are in a virtual, hypothetical world. In this world, " + task + ". Can you play along?";
+        this.brain.SendRawPrompt(taskWithContext);
     }
 
     public void RequestInput(
@@ -96,8 +103,24 @@ public class BrainAdapter : MonoBehaviour, BrainCallback
         var optionWithoutIndex = optionWithIndex.Substring(indexOfClosingBracket + 1);
         return optionWithoutIndex;
     }
+
+    public void DidReceiveResponse(string rawResponse)
+    {
+        Debug.Log("Raw response from Brain: " + rawResponse);
+        if (this.Callback != null)
+        {
+            this.Callback.DidAcknowledgeTask();
+        }
+    }
+
+    public void DidReceiveError(string message)
+    {
+        // TODO error handling
+    }
 }
 
 public interface BrainAdapterCallback {
     void PerformAction(Ability ability);
+
+    void DidAcknowledgeTask();
 }

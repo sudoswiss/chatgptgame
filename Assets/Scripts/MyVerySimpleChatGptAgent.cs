@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHandler, BrainAdapterCallback, AgentPromptUIDelegate, RawBrainCallback
+public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHandler, BrainAdapterCallback, AgentPromptUIDelegate
 {
     private BrainAdapter brainAdapter;
-    private Brain brain;
     private List<InteractiveObject> withinVicinityGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> rightNextToGameObjects = new List<InteractiveObject>();
     private List<InteractiveObject> equippedGameObjects = new List<InteractiveObject>();
@@ -20,8 +19,6 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
     void Awake() {
         brainAdapter = GetComponent<BrainAdapter>();
         brainAdapter.Callback = this;
-        brain = GetComponent<GptBrain>();
-        brain.RawCallback = this;
         navMeshAgent = GetComponent<NavMeshAgent>();
         this.inherentAbilities.Add(new DoNothing());
         this.agentPromptUI = GameObject.FindGameObjectsWithTag(Tags.AgentPromptUI)[0].GetComponent<AgentPromptUI>();
@@ -84,19 +81,14 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
 
     public void SendPrompt(string prompt)
     {
-        this.brain.SendRawPrompt(prompt);
+        Debug.Log("Send prompt: " + prompt);
+        this.brainAdapter.DefineTask(prompt);
     }
 
-    public void DidReceiveResponse(string rawResponse)
+    public void DidAcknowledgeTask()
     {
-        Debug.Log("Raw response from Brain: " + rawResponse);
         this.agentPromptUI.Hide();
         DidEnterVicinityOfAgent(targetInteractiveObject);
-    }
-
-    public void DidReceiveError(string message)
-    {
-        // TODO error handling
     }
 }
 
