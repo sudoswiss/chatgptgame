@@ -17,7 +17,7 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
 
     public void DefineTask(string task)
     {
-        var taskWithContext = "Hello there. I want to play a game with you. Imagine that you are in a virtual, hypothetical world. In this world, " + task + ". Can you play along?";
+        var taskWithContext = "Hello there. I want to play a game with you. Pretend that you are in a virtual, hypothetical world. You can move around in this world and interact with everything. In this world, " + task + ". Can you play along?";
         Debug.Log(">Adapter: Define task: " + taskWithContext);
         this.brain.SendRawPrompt(taskWithContext);
     }
@@ -62,8 +62,8 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
             }
         }
 
-        var contextPreamble = "Again, imagine you are in a hypothetical virtual world. I want you to answer only with the numbers in the square brackets that are presented to you. Given this, ";
-        var promptPreamble = "What action do you want to take? Answer only with the number inside the square brackets.";
+        var contextPreamble = "Again, imagine you are in a hypothetical virtual world that you can move around in and interact wth. I want you to answer only with one of the options presented to you. Given this, ";
+        var promptPreamble = "What action do you want to take? Again, please answer with one of the given options and include the number in the square brackets.";
         var optionsString = "";
         foreach(string option in options) {
             optionsString += option;
@@ -82,7 +82,10 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
         }
         
         // e.g. selectedOption = [1] Turn left
-        var selectedOption = responseData.PossibleOptions.First(option => option.Contains(responseData.Response) || responseData.Response.Contains(option));
+        var selectedOption = responseData.PossibleOptions.First(option =>
+            option.Contains(responseData.Response) || responseData.Response.Contains(option) ||
+            option.Contains(ExtractOption(responseData.Response)) || responseData.Response.Contains(ExtractOption(option))
+        );
         Debug.Log("Adapter> Selected option" + selectedOption);
 
         // e.g. optionWithoutIndex = Turn left

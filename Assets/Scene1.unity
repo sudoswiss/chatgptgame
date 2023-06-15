@@ -764,6 +764,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2692144715385115182, guid: 4e6ec076fabc0494db4fa5402d517a9f, type: 3}
+      propertyPath: Args
+      value: 
+      objectReference: {fileID: 11400000, guid: 6d11d331f106a41abb22a0461bc261ba, type: 2}
+    - target: {fileID: 2692144715385115182, guid: 4e6ec076fabc0494db4fa5402d517a9f, type: 3}
       propertyPath: Model
       value: 0
       objectReference: {fileID: 0}
