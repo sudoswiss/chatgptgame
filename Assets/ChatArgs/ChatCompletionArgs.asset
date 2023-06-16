@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 080e53b2b28b9684d819081e4e9b9de6, type: 3}
   m_Name: ChatCompletionArgs
   m_EditorClassIdentifier: 
-  temperature: 1.5
+  temperature: 1
   top_p: 1
   n: 1
   stop:

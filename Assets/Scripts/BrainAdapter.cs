@@ -17,7 +17,7 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
 
     public void DefineTask(string task)
     {
-        var taskWithContext = "Hello there. I want to play a game with you. Pretend that you are in a virtual, hypothetical world. You can move around in this world and interact with everything. In this world, " + task + ". Can you play along?";
+        var taskWithContext = "Hello there. I want to play a game with you. Pretend that you are a character in a text-based video game. I will give you a series of prompts along with possible actions from which you can choose only one action at a time. In this game your mission is the following: " + task + ". Please don't start just yet. Wait until I give you a new prompt with a numbered list of possible actions you can take.";
         Debug.Log(">Adapter: Define task: " + taskWithContext);
         this.brain.SendRawPrompt(taskWithContext);
     }
@@ -62,13 +62,12 @@ public class BrainAdapter : MonoBehaviour, BrainCallback, RawBrainCallback
             }
         }
 
-        var contextPreamble = "Again, imagine you are in a hypothetical virtual world that you can move around in and interact wth. I want you to answer only with one of the options presented to you. Given this, ";
-        var promptPreamble = "What action do you want to take? Again, please answer with one of the given options and include the number in the square brackets.";
+        var promptPreamble = "What action do you want to take? Please answer with one of the given options verbatim.";
         var optionsString = "";
         foreach(string option in options) {
-            optionsString += option;
+            optionsString += option + "\n";
         }
-        var completePrompt = contextPreamble + " " + context + " " + promptPreamble + "\n" + optionsString;
+        var completePrompt = context + " " + promptPreamble + "\n" + optionsString;
         Debug.Log("Adapter> Send prompt: " + completePrompt);
         brain.SendPrompt(new PromptData(completePrompt, abilities, options));
     }
