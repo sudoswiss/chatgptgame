@@ -36,8 +36,24 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
 
     void OnTriggerEnter(Collider other)
     {
+        InteractiveObject interactiveObject = ObtainInteractiveObject(other);
+        if (interactiveObject != null)
+        {
+            rightNextToGameObjects.Add(interactiveObject);
+
+            // Remove object from other vicinities
+            this.withinVicinityGameObjects.Remove(interactiveObject);
+            this.equippedGameObjects.Remove(interactiveObject);
+
+            var context = "Object " + interactiveObject.Identifier + " is right next to you.";
+            brainAdapter.RequestInput(context, this.inherentAbilities, this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
+        }
+    }
+
+    private InteractiveObject ObtainInteractiveObject(Collider other)
+    {
         InteractiveObject interactiveObject = null;
-        switch(other.tag)
+        switch (other.tag)
         {
             case Tags.YellowCube:
                 interactiveObject = other.gameObject.GetComponent<Cube>();
@@ -54,16 +70,20 @@ public class MyVerySimpleChatGptAgent : MonoBehaviour, MyVerySimpleSceneEventHan
             default:
                 break;
         }
-        if(interactiveObject != null)
+
+        return interactiveObject;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        InteractiveObject interactiveObject = ObtainInteractiveObject(other);
+        if (interactiveObject != null)
         {
-            rightNextToGameObjects.Add(interactiveObject);
+            this.withinVicinityGameObjects.Add(interactiveObject);
 
             // Remove object from other vicinities
-            this.withinVicinityGameObjects.Remove(interactiveObject);
+            this.rightNextToGameObjects.Remove(interactiveObject);
             this.equippedGameObjects.Remove(interactiveObject);
-
-            var context = "Object " + interactiveObject.Identifier + " is right next to you.";
-            brainAdapter.RequestInput(context, this.inherentAbilities, this.withinVicinityGameObjects, this.rightNextToGameObjects, this.equippedGameObjects, this);
         }
     }
 
